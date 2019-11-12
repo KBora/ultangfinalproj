@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'login',
+  selector: 'register',
   template: `
     <div>
-      Hello Ultimate Angular!
+     Register
+        <auth-form></auth-form>
     </div>
   `
 })
-export class LoginComponent {
+export class RegisterComponent {
   constructor() {}
 }
