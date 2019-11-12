@@ -30,3 +30,15 @@ export const ROUTES: Routes = [];
   ]
 })
 export class AppModule {}
+
+/*
+var firebaseConfig = {
+  apiKey: "AIzaSyD81cnoczI2Lml_HWlk_oayJ9ZhgQ7dbPA",
+  authDomain: "ultimateangularfitness.firebaseapp.com",
+  databaseURL: "https://ultimateangularfitness.firebaseio.com",
+  projectId: "ultimateangularfitness",
+  storageBucket: "ultimateangularfitness.appspot.com",
+  messagingSenderId: "79918111810",
+  appId: "1:79918111810:web:25c57a21a39c8b7a89e1db"
+};
+  */
