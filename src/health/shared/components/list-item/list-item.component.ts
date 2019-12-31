@@ -9,10 +9,13 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
        <a [routerLink]="getRoute(item)">
            <p class="list-item__name">{{ item.name }}</p>
            <p class="list-item__ingredients">
-               <span *ngIf="item.ingredients; else showWorkout">{{ item.ingredients }}</span>
+               <span *ngIf="item.ingredients; else showWorkout">
+                   {{ item.ingredients | join }}
+               </span>
+               
            </p>
            <ng-template #showWorkout>
-               <span>{{ item }}</span>
+               <span>{{ item | workout }}</span>
            </ng-template>
        </a>
        
