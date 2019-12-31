@@ -11,13 +11,15 @@ export interface State {
   user: User,
   meals: Meal[],
   workouts: Workout[],
-  [key: string]: any
+  [key: string]: any,
+  date: Date
 }
 
 const state: State = {
   user: undefined,
   meals: undefined,
-  workouts: undefined
+  workouts: undefined,
+  date: undefined
 };
 
 export class Store {
