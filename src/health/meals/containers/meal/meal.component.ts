@@ -20,11 +20,20 @@ import { Observable, Subscription } from 'rxjs';
                 </ng-template>
             </h1>
         </div>
-        <div>
-            <meal-form
+        <div *ngIf="meal$ | async as meal; else loading;">
+            <meal-form 
+                [meal]="meal"
+                (update)="updateMeal($event)"
+                (remove)="removeMeal($event)"
                 (create)="addMeal($event)">
             </meal-form>
         </div>
+        <ng-template #loading>
+            <div class="message">
+                <img src="/img/loading.svg" >
+                Fetching meal...
+            </div>
+        </ng-template>
     </div>
   `
 })
@@ -61,4 +70,17 @@ export class MealComponent implements OnInit, OnDestroy {
     this.router.navigate(['meals']);
   }
 
+  async updateMeal(event: Meal) {
+    // console.log('updateMeal', event);
+    const key = this.route.snapshot.params.id;
+    await this.mealsService.updateMeal(key, event);
+    this.backToMeals();
+  }
+
+  async removeMeal(event: Meal) {
+    //console.log('removeMeal', event);
+    const key = this.route.snapshot.params.id;
+    await this.mealsService.removeMeal(key);
+    this.backToMeals();
+  }
 }
