@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Meal, MealsService } from '../../../shared/services/meals/meals.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'meal',
@@ -10,7 +12,12 @@ import { Router } from '@angular/router';
         <div class="meal__title">
             <h1>
                 <img src="/img/food.svg" alt="">
-                <span>Create meal</span>
+                <span *ngIf="meal$ | async as meal; else title;">
+                    {{ meal.name ? 'Edit' : 'Create' }} meal
+                </span>
+                <ng-template #title>
+                    Loading ...
+                </ng-template>
             </h1>
         </div>
         <div>
@@ -22,11 +29,28 @@ import { Router } from '@angular/router';
   `
 })
 
-export class MealComponent  {
+export class MealComponent implements OnInit, OnDestroy {
+
+  meal$: Observable<Meal>;
+  subscription: Subscription;
+
   constructor(
     private mealsService: MealsService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+    this.subscription = this.mealsService.meals$.subscribe();
+
+    // this gets a meal from the meals service, based on the params in the route
+    this.meal$ = this.route.paramMap
+      .switchMap(param => this.mealsService.getMeal(param.id))
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
   async addMeal(event: Meal) {
     await this.mealsService.addMeal(event);
