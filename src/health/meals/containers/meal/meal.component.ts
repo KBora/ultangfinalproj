@@ -45,7 +45,7 @@ export class MealComponent implements OnInit, OnDestroy {
 
     // this gets a meal from the meals service, based on the params in the route
     this.meal$ = this.route.paramMap
-      .switchMap(param => this.mealsService.getMeal(param.id))
+      .switchMap(param => this.mealsService.getMeal(param.get('id')));
   }
 
   ngOnDestroy() {
