@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Store } from 'store';
 import { Meal } from '../meals/meals.service';
 import { Workout } from '../workouts/workouts.service';
@@ -28,6 +28,11 @@ export interface ScheduleList {
 export class ScheduleService {
 
   private date$ = new BehaviorSubject(new Date());
+  private section$ = new Subject();
+
+  // this keeps track of what section the user has just selected
+  selected$ = this.section$
+    .do((next: any) => this.store.set('selected', next ));
 
   // revision: these chained observable operations work on the stream and pass (another observable) to the next operator
   // eg map returns an object {startAt, endAt} to the next operator in the stream
@@ -86,6 +91,11 @@ export class ScheduleService {
   // when we do this, the above .do code (subscription) will set the new date in the store
   updateDate(date: Date) {
     this.date$.next(date);
+  }
+
+  selectSection(event: any) {
+    //  passing what the user has selected into the section$ subject
+    this.section$.next(event);
   }
 
   private getSchedule(startAt: number, endAt: number) {

@@ -12,8 +12,10 @@ import { Store } from 'store';
 
           <schedule-calendar
             [date]="date$ | async"
+            [items]="schedule$ | async"
             (change)="changeDate($event)"
-            [items]="schedule$ | async">
+            (select)="changeSection($event)"
+            >
           </schedule-calendar>
       </div>
   `
@@ -34,12 +36,19 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     this.scheduleService.updateDate(date);
   }
 
+  changeSection(event: any) {
+    // go to service..
+    console.log('changeSection: ', event);
+    this.scheduleService.selectSection(event);
+  }
+
   ngOnInit() {
     this.date$ = this.store.select('date');
     this.schedule$ = this.store.select('schedule');
 
     this.subscriptions = [
       this.scheduleService.schedule$.subscribe(),
+      this.scheduleService.selected$.subscribe(),
     ];
   }
 

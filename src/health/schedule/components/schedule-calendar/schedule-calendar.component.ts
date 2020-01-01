@@ -20,6 +20,7 @@ import { ScheduleItem, ScheduleList } from '../../../shared/services/schedule/sc
         *ngFor="let section of sections"
         [name]="section.name"
         [section]="getSection(section.key)"
+        (select)="selectSection($event, section.key)"
         >
 
       </schedule-section>
@@ -53,19 +54,36 @@ export class ScheduleCalendarComponent implements OnChanges {
   @Output()
   change = new EventEmitter<Date>();
 
+  @Output()
+  select = new EventEmitter<any>();
+
   constructor() {}
 
   ngOnChanges() {
     // when day changes, ie. any Input changes, this ngOnChanges
     // life cycle event runs and updates other variables
-    this.selectedDayIndex = this.getToday(this.selectedDay);
-    this.selectedWeek = this.getStartOfWeek(new Date(this.selectedDay));
+    this.selectedDayIndex = ScheduleCalendarComponent.getToday(this.selectedDay);
+    this.selectedWeek = ScheduleCalendarComponent.getStartOfWeek(new Date(this.selectedDay));
   }
 
-  getSection(name: string): { key: string, name: string } {
+  getSection(name: string): ScheduleItem {
     // code below is shorthand for..
     // if items exist, then return items[name else return empty object
     return this.items && this.items[name] || {};
+  }
+
+  // using object destructing.. declaring object shapes in the params
+  selectSection({type, assigned, data}: any, section: string) {
+    console.log('selectSection', event);
+
+    const day = this.selectedDay;
+    this.select.emit({
+      type,
+      assigned,
+      section,
+      day,
+      data
+    })
   }
 
   selectDay(index: number) {
@@ -76,7 +94,7 @@ export class ScheduleCalendarComponent implements OnChanges {
 
   onChange(weekOffset: number) {
     // modify date by offset
-    const startOfWeek = this.getStartOfWeek( new Date() );
+    const startOfWeek = ScheduleCalendarComponent.getStartOfWeek( new Date() );
     const startDate = (
       new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate())
     );
@@ -84,7 +102,7 @@ export class ScheduleCalendarComponent implements OnChanges {
     this.change.emit(startDate);
   }
 
-  private getStartOfWeek(date: Date) {
+  private static getStartOfWeek(date: Date) {
     const day = date.getDay();
     // assumes start of week is a monday
     const diff = date.getDate() - day + ( day === 0 ? - 6 : 1) ;
@@ -93,13 +111,14 @@ export class ScheduleCalendarComponent implements OnChanges {
 
   // i think this is only used because getDay returns 0 for sunday and
   // we want 0 to be monday and 6 to be saturday
-  private getToday(date: Date) {
+  private static getToday(date: Date) {
     let today = date.getDay() - 1; // why decrement today?
     if (today < 0) {
       today = 6;
     }
     return today;
   }
+
 
 
  }
