@@ -11,7 +11,8 @@ import { Store } from 'store';
       <div class="schedule">
 
           <schedule-calendar
-              [date]="date$ | async">
+            [date]="date$ | async"
+            (change)="changeDate($event)">
           </schedule-calendar>
       </div>
   `
@@ -25,6 +26,11 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     private store: Store,
     private scheduleService: ScheduleService
   ) {}
+
+  changeDate(date: Date) {
+    console.log('schedule.component date', date);
+    this.scheduleService.updateDate(date);
+  }
 
   ngOnInit() {
     this.date$ = this.store.select('date');
