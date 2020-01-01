@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { ScheduleItem, ScheduleList } from '../../../shared/services/schedule/schedule.service';
 
 @Component({
   selector: 'schedule-calendar',
@@ -13,8 +14,15 @@ import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core
       <schedule-days
         [selected]="selectedDayIndex"
         (select)="selectDay($event)">
-          
       </schedule-days>
+        
+      <schedule-section
+        *ngFor="let section of sections"
+        [name]="section.name"
+        [section]="getSection(section.key)"
+        >
+
+      </schedule-section>
     </div>
   `
 })
@@ -24,6 +32,13 @@ export class ScheduleCalendarComponent implements OnChanges {
   selectedDay: Date;
   selectedWeek: Date;
 
+  sections = [
+    { key: 'morning', name: 'Morning' },
+    { key: 'lunch', name: 'Lunch' },
+    { key: 'evening', name: 'Evening' },
+    { key: 'snacks', name: 'Snacks and Drinks' },
+  ];
+
   // "set gives us the value that's coming in from the input"
   // so it seems like a way of passing on an input from this components
   // Input (date) and passing it to the child (selected)
@@ -31,6 +46,9 @@ export class ScheduleCalendarComponent implements OnChanges {
   set date(date: Date) {
     this.selectedDay = new Date(date.getTime());
   }
+
+  @Input()
+  items: ScheduleList;
 
   @Output()
   change = new EventEmitter<Date>();
@@ -42,6 +60,12 @@ export class ScheduleCalendarComponent implements OnChanges {
     // life cycle event runs and updates other variables
     this.selectedDayIndex = this.getToday(this.selectedDay);
     this.selectedWeek = this.getStartOfWeek(new Date(this.selectedDay));
+  }
+
+  getSection(name: string): { key: string, name: string } {
+    // code below is shorthand for..
+    // if items exist, then return items[name else return empty object
+    return this.items && this.items[name] || {};
   }
 
   selectDay(index: number) {

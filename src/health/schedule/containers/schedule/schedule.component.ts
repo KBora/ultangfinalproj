@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { ScheduleService } from '../../../shared/services/schedule/schedule.service';
+import { ScheduleItem, ScheduleService } from '../../../shared/services/schedule/schedule.service';
 import { Store } from 'store';
 
 @Component({
@@ -12,7 +12,8 @@ import { Store } from 'store';
 
           <schedule-calendar
             [date]="date$ | async"
-            (change)="changeDate($event)">
+            (change)="changeDate($event)"
+            [items]="schedule$ | async">
           </schedule-calendar>
       </div>
   `
@@ -20,11 +21,12 @@ import { Store } from 'store';
 export class ScheduleComponent implements OnInit, OnDestroy {
 
   date$: Observable<Date>;
+  schedule$: Observable<ScheduleItem[]>;
   subscriptions: Subscription[] = [];
 
   constructor(
     private store: Store,
-    private scheduleService: ScheduleService
+    private scheduleService: ScheduleService,
   ) {}
 
   changeDate(date: Date) {
@@ -34,6 +36,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.date$ = this.store.select('date');
+    this.schedule$ = this.store.select('schedule');
 
     this.subscriptions = [
       this.scheduleService.schedule$.subscribe(),
