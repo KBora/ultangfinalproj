@@ -11,7 +11,8 @@ import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core
       </schedule-controls>
         
       <schedule-days
-        [selected]="selectedDayIndex">
+        [selected]="selectedDayIndex"
+        (select)="selectDay($event)">
           
       </schedule-days>
     </div>
@@ -36,6 +37,19 @@ export class ScheduleCalendarComponent implements OnChanges {
 
   constructor() {}
 
+  ngOnChanges() {
+    // when day changes, ie. any Input changes, this ngOnChanges
+    // life cycle event runs and updates other variables
+    this.selectedDayIndex = this.getToday(this.selectedDay);
+    this.selectedWeek = this.getStartOfWeek(new Date(this.selectedDay));
+  }
+
+  selectDay(index: number) {
+    const selectedDay = new Date(this.selectedWeek); // set it start of week
+    selectedDay.setDate(selectedDay.getDate() + index); // set to actual selected day
+    this.change.emit(selectedDay);
+  }
+
   onChange(weekOffset: number) {
     // modify date by offset
     const startOfWeek = this.getStartOfWeek( new Date() );
@@ -44,13 +58,6 @@ export class ScheduleCalendarComponent implements OnChanges {
     );
     startDate.setDate(startDate.getDate() + (weekOffset * 7));
     this.change.emit(startDate);
-  }
-
-  ngOnChanges() {
-    // when day changes, ie. any Input changes, this ngOnChanges
-    // life cycle event runs and updates other variables
-    this.selectedDayIndex = this.getToday(this.selectedDay);
-    this.selectedWeek = this.getStartOfWeek(new Date(this.selectedDay));
   }
 
   private getStartOfWeek(date: Date) {
@@ -69,5 +76,6 @@ export class ScheduleCalendarComponent implements OnChanges {
     }
     return today;
   }
+
 
  }
