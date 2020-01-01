@@ -34,17 +34,21 @@ export class ScheduleService {
   selected$ = this.section$
     .do((next: any) => this.store.set('selected', next ));
 
+  // holds list of workouts / meals for a section
+  // value is the current section the user clicked on
+  // double use of the word value is confusing..
+  // basically getting the list of meals or workouts
+  list$ = this.section$
+    .map((value: any) => this.store.value[value.type])
+    .do((next: any) => this.store.set('list', next ));
+
   // revision: these chained observable operations work on the stream and pass (another observable) to the next operator
   // eg map returns an object {startAt, endAt} to the next operator in the stream
   // note: .do / .tap does not modify the stream
   // the last operator in the stream needs to return the right type
   // in this case <ScheduleItem[]>
   // however each operation in the middle can do whatever
-
   // so it is basically like a sequence of operations on Observables
-
-
-
   // $schedule subscribes to $date and gets schedules from firebase
   public schedule$: Observable<ScheduleItem[]> = this.date$
     .do((next: any) => this.store.set('date', next))
